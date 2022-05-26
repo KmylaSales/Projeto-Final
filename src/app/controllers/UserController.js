@@ -4,10 +4,10 @@ class UserController {
   // Criando usuário
   async store(req, res) {
     // Verificando se ja existe um email cadastrado
-    const userExists = await User.findOne({
+    const thisUserExists = await User.findOne({
       where: { email: req.body.email },
     });
-    if (userExists) {
+    if (thisUserExists) {
       return res.status(400).json({ error: "Usuário já existe! " });
     }
 
@@ -20,27 +20,28 @@ class UserController {
     });
   }
 
+  // Fazendo autualização do Usuário
   async update(req, res) {
     const { req_email } = req.params;
 
     // verificcar se o email existe
-    const userExists = await User.findOne({
+    const thisUserExists = await User.findOne({
       where: { email: req_email },
     });
     // Email params existe então busco email body
-    if (userExists) {
-      const emailUpdate = await User.findOne({
+    if (thisUserExists) {
+      const informedEmail = await User.findOne({
         where: { email: req.body.email },
       });
 
       // Verifico se o email do body não é null ou se ele é igual ao email params
-      if (!emailUpdate || emailUpdate.email === userExists.email) {
-        const { id, name, email } = await userExists.update(req.body);
+      if (!informedEmail || informedEmail.email === thisUserExists.email) {
+        const { id, name, email } = await thisUserExists.update(req.body);
         return res.json({ id, name, email });
       }
 
       // Email do body já existe !! Retorna o erro
-      if (emailUpdate) {
+      if (informedEmail) {
         return res.status(400).json({ error: "Usuário já existe! " });
       }
     }
