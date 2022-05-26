@@ -1,8 +1,10 @@
+require("dotenv").config();
+
 module.exports = {
   dialect: "postgres",
   host: "localhost",
-  username: "postgres",
-  password: "Camila88",
+  username: "kerem",
+  password: "9180",
   database: "luizacode",
   define: {
     timestamps: true,
