@@ -9,4 +9,6 @@ routes.post("/users", UserController.store);
 
 routes.put("/users/:req_email", UserController.update);
 
+routes.get("/users/", UserController.index);
+
 export default routes;

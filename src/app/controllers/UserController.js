@@ -12,6 +12,7 @@ class UserController {
     }
 
     // Criando o novo usuário com as informações do body
+
     const { id, name, email } = await User.create(req.body);
     return res.json({
       id,
@@ -47,6 +48,20 @@ class UserController {
     }
     return res.status(400).json({ error: "Email não existe" });
   }
+
+  // Fazendo busca de varios usuarios
+
+  async index(req, res) {
+    const users = await User.findAll({
+      where: {
+        name: req.body.name.toLowerCase(),
+      },
+    });
+
+    return res.json(users);
+  }
+
+  // Fazendo busca de uma unica pessoa
 }
 
 export default new UserController();
