@@ -1,5 +1,6 @@
 import Product from "../models/Product";
 
+const { Op } = require("sequelize");
 
 class ProductController {
 
@@ -28,11 +29,10 @@ class ProductController {
 //UPDATE PRODUCT 
 
 async update(req, res) {
-  const { req_title } = req.params;
+  const { req_id } = req.params;
 
-  // verificar se o title existe
   const thisTitleExists = await Product.findOne({
-    where: { title: req_title },
+    where: { id: req_id },
   });
 
   if (thisTitleExists) {
@@ -40,20 +40,18 @@ async update(req, res) {
       where: { title: req.body.title },
     });
 
-    // Verifico se o title do body não é null ou se ele é igual ao title params
-    if (!informedTitle || informedTitle.title === thisTitleExists.title) {
-      const { id, title, description, price } = await thisTitleExists.update(req.body);
-      return res.json({ id, title, description, price });
+    if (!informedTitle|| informedTitle.title === thisTitleExists) {
+      const { id, title, author, description, price } =
+        await thisTitleExists.update(req.body);
+      return res.json({ id, title, author, description, price });
     }
 
-    // Email do body já existe !! Retorna o erro
     if (informedTitle) {
-      return res.status(400).json({ error: "Produto já existe! " });
+      return res.status(406).json({ error: "Produto já existe! " });
     }
   }
-  return res.status(400).json({ error: "Produto não alterado!" });
+  return res.status(404).json({ error: "Usuario não encontrado" });
 }
-
 // //DELETE PRODUCT - ID 
 
 async delete(req, res){
@@ -79,15 +77,15 @@ async index(req, res) {
 
 // // SEARCH MULTIPLE PRODUCTS
 
-// // Filtro por nome do [cliente??]
+// // Filtro por nome do produto 
 
-// async findAll(req, res) {
-//   const users = await User.findAll({
-//     where: { title: { [Op.iLike]: `%${req.body.title}%` } },
-//   });
+async findAllProduct(req, res) {
+  const product = await Product.findAll({
+    where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+  });
+  return res.json(product);
 
-//   return res.json(users);
-// }
+}
 }
 
 export default new ProductController();

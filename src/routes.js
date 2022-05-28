@@ -36,11 +36,15 @@ routes.delete("/product/:id", ProductController.delete);
 
 // //Atualizar um produto
 
-routes.put("/product/:req_title", ProductController.update);
+routes.put("/product/:req_id", ProductController.update);
 
 // //Pesquisar um produto - id
 
 routes.get("/product/index/:id", ProductController.index);
+
+// Procurar produto pelo inicio do nome 
+
+routes.get("/product", ProductController.findAllProduct);
 
 
 export default routes;
