@@ -1,6 +1,6 @@
 import Product from "../models/Product";
 
-// const { Op } = require("sequelize");
+const { Op } = require("sequelize");
 
 class ProductController {
   async store(req, res) {
@@ -22,9 +22,30 @@ class ProductController {
     });
   }
 
-  // Fazendo autualização do Usuário
+  // Fazendo autualização do Usuário /// payloand ---
   async update(req, res) {
-    res.json({ ok: true });
+    const { req_id } = req.params;
+
+    const thisUserExists = await Product.findOne({
+      where: { id: req_id },
+    });
+
+    if (thisUserExists) {
+      const informedEmail = await Product.findOne({
+        where: { title: req.body.title },
+      });
+
+      if (!informedEmail || informedEmail.email === thisUserExists.email) {
+        const { id, title, author, description, price } =
+          await thisUserExists.update(req.body);
+        return res.json({ id, title, author, description, price });
+      }
+
+      if (informedEmail) {
+        return res.status(406).json({ error: "Produto já existe! " });
+      }
+    }
+    return res.status(404).json({ error: "Usuario não encontrado" });
   }
 
   // // Fazendo o delete do user
@@ -57,15 +78,15 @@ class ProductController {
   //   return res.json(userReade);
   // }
 
-  // // fazendo busca pelo nome
-  // async findAll(req, res) {
-  //   const users = await Product.findAll({
-  //     limit: 1,
-  //     offset: 1,
-  //     where: { name: { [Op.iLike]: `%${req.body.name}%` } },
-  //   });
-  //   return res.json(users);
-  // }
+  // fazendo busca pelo nome
+  async findAll(req, res) {
+    const users = await Product.findAll({
+      limit: 1,
+      offset: 1,
+      where: { name: { [Op.iLike]: `%${req.body.name}%` } },
+    });
+    return res.json(users);
+  }
 
   // // Fazendo busca de uma lista por um cliente
   // //   async findWishlist(req, res) {

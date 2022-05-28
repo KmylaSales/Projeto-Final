@@ -93,6 +93,16 @@ class UserController {
     }
     return res.json(users);
   }
-}
 
+  async findAllUser(req, res) {
+    const getPagination = (page, size) => {
+      const limit = size ? +size : 3;
+      const offset = page ? page * limit : 0;
+      return { limit, offset };
+    };
+    const users = await User.findByPk(getPagination);
+
+    return res.json(users);
+  }
+}
 export default new UserController();
