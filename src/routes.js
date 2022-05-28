@@ -2,20 +2,26 @@
 import { Router } from "express";
 
 import UserController from "./app/controllers/UserController";
+import ProductController from "./app/controllers/ProductController";
 
 const routes = new Router();
 
 // Rotas do usuario
 routes.post("/users", UserController.store);
 
-routes.put("/users/:req_email", UserController.update);
+routes.delete("/users/:id", UserController.delete);
 
 routes.get("/users/:id", UserController.index);
 
-routes.get("/users/", UserController.findAll);
+routes.get("/users", UserController.findAll);
 
-routes.post("/users/:id", UserController.index);
+routes.get("/users/email/:req_email", UserController.findEmail);
 
-routes.post("/users/:id", UserController.findWishlist);
+routes.put("/users/:req_email", UserController.update);
+
+// Rotas Produtos
+routes.post("/users/product", ProductController.store);
+
+routes.put("/users/product/:req_id", ProductController.update);
 
 export default routes;

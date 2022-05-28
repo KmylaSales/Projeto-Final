@@ -51,31 +51,54 @@ class UserController {
     return res.status(400).json({ error: "Email não existe" });
   }
 
-  // Fazendo busca de um user
-  async index(req, res) {
+  // Fazendo o delete do user
+  async delete(req, res) {
     const { id } = req.params;
-    const user = await User.findByPk({
-      where: { id },
-    });
-    return res.json(user);
+    /*  if(userDelete){
+          const findWhishlist = await User.findAll({
+            include:{ association: 'wishlist' }
+          })
+      } */
+    const userDelete = await User.findByPk(id);
+
+    await userDelete.destroy();
+    return res.send();
   }
 
-  // Fazendo busca de varios usuarios
+  // Fazendo busca de um usuario por id
+  async index(req, res) {
+    const { id } = req.params;
+    const userRead = await User.findByPk(id);
+    return res.json(userRead);
+  }
+
+  // fazendo busca de um usuario por email
+  async findEmail(req, res) {
+    const { req_email } = req.params;
+    const userReade = await User.findOne({
+      where: { email: req_email },
+    });
+    return res.json(userReade);
+  }
+
+  // fazendo busca pelo nome
   async findAll(req, res) {
     const users = await User.findAll({
+      limit: 1,
+      offset: 1,
       where: { name: { [Op.iLike]: `%${req.body.name}%` } },
     });
     return res.json(users);
   }
 
   // Fazendo busca de uma lista por um cliente
-  async findWishlist(req, res) {
-    const { id } = req.params;
-    const users = await User.findByPk(id, {
-      include: { association: "wishlist" },
-    });
+  //   async findWishlist(req, res) {
+  //     const { id } = req.params;
+  //     const users = await User.findByPk(id, {
+  //       include: { association: "wishlist" },
+  //     });
 
-    return res.json(users);
-  }
+  //     return res.json(users);
+  //   }
 }
 export default new UserController();
