@@ -1,5 +1,7 @@
 import User from "../models/User";
 
+const { Op } = require("sequelize");
+
 class UserController {
   // Criando usuário
   async store(req, res) {
@@ -49,19 +51,31 @@ class UserController {
     return res.status(400).json({ error: "Email não existe" });
   }
 
-  // Fazendo busca de varios usuarios
-
+  // Fazendo busca de um user
   async index(req, res) {
+    const { id } = req.params;
+    const user = await User.findByPk({
+      where: { id },
+    });
+    return res.json(user);
+  }
+
+  // Fazendo busca de varios usuarios
+  async findAll(req, res) {
     const users = await User.findAll({
-      where: {
-        name: req.body.name.toLowerCase(),
-      },
+      where: { name: { [Op.iLike]: `%${req.body.name}%` } },
+    });
+    return res.json(users);
+  }
+
+  // Fazendo busca de uma lista por um cliente
+  async findWishlist(req, res) {
+    const { id } = req.params;
+    const users = await User.findByPk(id, {
+      include: { association: "wishlist" },
     });
 
     return res.json(users);
   }
-
-  // Fazendo busca de uma unica pessoa
 }
-
 export default new UserController();
