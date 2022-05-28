@@ -3,17 +3,13 @@ import User from "../models/User";
 const { Op } = require("sequelize");
 
 class UserController {
-  // Criando usuário
   async store(req, res) {
-    // Verificando se ja existe um email cadastrado
     const thisUserExists = await User.findOne({
       where: { email: req.body.email },
     });
     if (thisUserExists) {
-      return res.status(400).json({ error: "Usuário já existe! " });
+      return res.status(406).json({ error: "Usuário já existe! " });
     }
-
-    // Criando o novo usuário com as informações do body
 
     const { id, name, email } = await User.create(req.body);
     return res.json({
@@ -23,82 +19,80 @@ class UserController {
     });
   }
 
-  // Fazendo autualização do Usuário
   async update(req, res) {
     const { req_email } = req.params;
 
-    // verificcar se o email existe
     const thisUserExists = await User.findOne({
       where: { email: req_email },
     });
-    // Email params existe então busco email body
+
     if (thisUserExists) {
       const informedEmail = await User.findOne({
         where: { email: req.body.email },
       });
 
-      // Verifico se o email do body não é null ou se ele é igual ao email params
       if (!informedEmail || informedEmail.email === thisUserExists.email) {
         const { id, name, email } = await thisUserExists.update(req.body);
         return res.json({ id, name, email });
       }
 
-      // Email do body já existe !! Retorna o erro
       if (informedEmail) {
-        return res.status(400).json({ error: "Usuário já existe! " });
+        return res.status(406).json({ error: "Usuário já existe! " });
       }
     }
-    return res.status(400).json({ error: "Email não existe" });
+    return res.status(404).json({ error: "Email não encontrado" });
   }
 
-  // Fazendo o delete do user
   async delete(req, res) {
     const { id } = req.params;
+    const userDelete = await User.findByPk(id);
     /*  if(userDelete){
           const findWhishlist = await User.findAll({
             include:{ association: 'wishlist' }
           })
+          res.status(405).json({error: Você possui uma lista de desejos, não podemos deletar sua conta! })
       } */
-    const userDelete = await User.findByPk(id);
 
     await userDelete.destroy();
     return res.send();
   }
 
-  // Fazendo busca de um usuario por id
   async index(req, res) {
     const { id } = req.params;
     const userRead = await User.findByPk(id);
+
+    if (!userRead) {
+      res.status(404).json({ error: "Usuario não foi localizado!" });
+    }
     return res.json(userRead);
   }
 
-  // fazendo busca de um usuario por email
   async findEmail(req, res) {
     const { req_email } = req.params;
-    const userReade = await User.findOne({
+    const userRead = await User.findOne({
       where: { email: req_email },
     });
-    return res.json(userReade);
+    if (!userRead) {
+      res.status(404).json({ error: "Usuario não foi localizado!" });
+    }
+
+    return res.json(userRead);
   }
 
-  // fazendo busca pelo nome
   async findAll(req, res) {
     const users = await User.findAll({
-      limit: 1,
+      limit: 10,
       offset: 1,
       where: { name: { [Op.iLike]: `%${req.body.name}%` } },
     });
+
+    if (!users || users === null) {
+      res
+        .status(404)
+        .json({ error: "Ops! Usuário não existe ou não foi informado!" });
+    }
     return res.json(users);
   }
-
-  // Fazendo busca de uma lista por um cliente
-  //   async findWishlist(req, res) {
-  //     const { id } = req.params;
-  //     const users = await User.findByPk(id, {
-  //       include: { association: "wishlist" },
-  //     });
-
-  //     return res.json(users);
-  //   }
 }
+
 export default new UserController();

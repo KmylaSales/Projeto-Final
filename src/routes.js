@@ -22,6 +22,6 @@ routes.put("/users/:req_email", UserController.update);
 // Rotas Produtos
 routes.post("/users/product", ProductController.store);
 
-routes.put("/users/product/:req_id", ProductController.update);
+routes.put("/users/product/:req_title", ProductController.update);
 
 export default routes;
