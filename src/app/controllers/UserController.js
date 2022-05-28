@@ -1,5 +1,7 @@
 import User from "../models/User";
 
+const { Op } = require("sequelize");
+
 class UserController {
   // Criando usuário
   async store(req, res) {
@@ -46,6 +48,42 @@ class UserController {
       }
     }
     return res.status(400).json({ error: "Email não existe" });
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    /*  if(userDelete){
+          const findWhishlist = await User.findAll({ 
+            include:{ association: 'wishlist' }
+          })
+      } */
+    const userDelete = await User.findByPk(id);
+
+    await userDelete.destroy();
+    return res.send();
+  }
+
+  async index(req, res) {
+    const { id } = req.params;
+    const userRead = await User.findByPk(id);
+    return res.json(userRead);
+  }
+
+  async findEmail(req, res) {
+    const { req_email } = req.params;
+    const userReade = await User.findOne({
+      where: { email: req_email },
+    });
+    return res.json(userReade);
+  }
+
+  async findAll(req, res) {
+    const users = await User.findAll({
+      limit: 1,
+      offset: 1,
+      where: { name: { [Op.iLike]: `%${req.body.name}%` } },
+    });
+    return res.json(users);
   }
 }
 
