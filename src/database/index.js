@@ -6,6 +6,8 @@ import Product from "../app/models/ProductModels"
 
 
 
+import Product from "../app/models/Product";
+
 // criado um array pois haverá mais models
 const models = [User, Product];
 
@@ -13,7 +15,7 @@ class Database {
   constructor() {
     this.init();
   }
-
+  
   init() {
     // Conexão do banco de dados com nossos models
     this.connection = new Sequelize(databaseConfig);

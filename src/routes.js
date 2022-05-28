@@ -31,17 +31,37 @@ routes.get("/users/email/:req_email", UserController.findEmail);
 
 routes.put("/users/:req_email", UserController.update);
 
+
 routes.put("/wishlist/:req_wishlist_id", WishlistController.updateId)
 
 routes.post("/product", ProductController.store)
 
 routes.post("/wishlist", WishlistController.store)
 
-<<<<<<< HEAD
-=======
-routes.put("/wishlist/:req_wishlist_id", WishListController.updateId)
 
 // routes.get("/wishlist", WishlitController.index)
->>>>>>> a9eb1f9d1995d6011c7bdfb8f63ae8fb95b11c17
+
+
+
+
+//Importar controller do Product
+
+import ProductController from "./app/controllers/ProductController";
+
+//Criar novo produto
+
+routes.post("/product", ProductController.store);
+
+// Deletar um produto 
+routes.delete("/product/:id", ProductController.delete);
+
+// //Atualizar um produto
+
+routes.put("/product/:req_title", ProductController.update);
+
+// //Pesquisar um produto - id
+
+routes.get("/product/index/:id", ProductController.index);
+
 
 export default routes;
