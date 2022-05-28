@@ -25,7 +25,7 @@ routes.post("/product", ProductController.store)
 
 routes.post("/wishlist", WishlistController.store)
 
-// routes.put("/wishlist/:req_wishlist_id", WishListController.update)
+routes.put("/wishlist/:req_wishlist_id", WishListController.updateId)
 
 // routes.get("/wishlist", WishlitController.index)
 
