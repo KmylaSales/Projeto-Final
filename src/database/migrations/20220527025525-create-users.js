@@ -1,10 +1,12 @@
+
+
 /* eslint-disable lines-around-directive */
 // eslint-disable-next-line strict
 "use strict";
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("user", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -36,6 +38,7 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("user");
   },
 };
+
