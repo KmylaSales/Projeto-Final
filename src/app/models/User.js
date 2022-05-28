@@ -12,6 +12,7 @@ class User extends Model {
       },
       {
         sequelize,
+        tableName: 'user',
       }
     );
     // Fazendo a criptografica da nossa senha

@@ -1,10 +1,17 @@
+
+
+
+
+
+
+
 /* eslint-disable lines-around-directive */
 // eslint-disable-next-line strict
 "use strict";
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("product", {
+    await queryInterface.createTable("user", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -15,10 +22,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
+      },
+      password_hash: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -32,6 +43,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable("product");
+    await queryInterface.dropTable("user");
   },
 };

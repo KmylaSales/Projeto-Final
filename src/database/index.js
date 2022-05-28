@@ -3,11 +3,11 @@ import databaseConfig from "../config/database";
 
 import User from "../app/models/User";
 import Product from "../app/models/ProductModels"
-import Wishlist from "../app/models/WishlistModels";
+
 
 
 // criado um array pois haverá mais models
-const models = [User, Product, Wishlist];
+const models = [User, Product];
 
 class Database {
   constructor() {
@@ -20,10 +20,9 @@ class Database {
 
     // carregar os models e fazer a conexão
     models.map((model) => model.init(this.connection));
-
+    
   }
 }
 
-Wishlist.associate(connection.models)
 
 export default new Database();
