@@ -37,5 +37,11 @@ routes.post("/product", ProductController.store)
 
 routes.post("/wishlist", WishlistController.store)
 
+<<<<<<< HEAD
+=======
+routes.put("/wishlist/:req_wishlist_id", WishListController.updateId)
+
+// routes.get("/wishlist", WishlitController.index)
+>>>>>>> a9eb1f9d1995d6011c7bdfb8f63ae8fb95b11c17
 
 export default routes;

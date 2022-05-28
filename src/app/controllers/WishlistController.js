@@ -76,6 +76,7 @@ class WishListController {
       return res.json(product);
     }
 }
+
 export default new WishListController();
 
 
