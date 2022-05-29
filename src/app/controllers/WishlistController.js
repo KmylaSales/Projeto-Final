@@ -1,84 +1,74 @@
 
-import User from "../models/User";
-import Wishlist from "../models/Wishlist";
+    import Wishlist from "../models/Wishlist";
+    import User from "../models/User";
+    import Product from "../models/Product";
+    
+    // const { Op } = require("sequelize");
+    
+    class WishlistController {
+    
+      //Criando uma wishlist
+      async store(req, res) {
+        try {
+          const { user_id } = req.params;
+          const { product_id, name } = req.body;
+          const thisHaveUser = await User.findByPk(user_id);
+          if (!thisHaveUser) {
+            return res.status(406).json({ error: "Usuario não existe! " });
+          }
+          const product = await Product.findOne({
+            where: { id: product_id },
+          });
+          if (!product) {
+            return res.status(406).json({ error: "Produto não existe! " });
+          }
+    
+          const wishlist = await Wishlist.create({
+            name,
+            user_id: parseInt(user_id, 10),
+          });
+      
+      wishlist.addProduct(product);
 
-class WishListController {
-
-  async store(req, res) {
-    try {
-      const { user_id } = req.params;
-      const thisHaveUser = await User.findByPk(user_id)
-      if (!thisHaveUser) {
-        return res.status(406).json({ error: "Lista de desejos já existe! " });
-      }
-
-      const { name } = req.body;
-      const wishlist = await Wishlist.create({
-        name,
-        user_id: parseInt(user_id, 10),
-      });
       return res.json(wishlist);
     } catch (error) {
-      console.error(error)
       return res.json({ ok: false });
     }
   }
-  
-  async updateId(req, res) {
+
+
+  //Atualizando uma wishlist
+  async update(req, res){
     const { req_id } = req.params;
+    const { product_id } = req.params
 
-    const wishListUp = await User.findOne({
-      where: { id: req_id },
-    })
-    if (wishListUp) {
-        return res.status(400).json({error: "A lista já existe!"});
+  const thisListExists = await Wishlist.findOne({
+    where: { id: req_id },
+  });
+  const productExistList = await Product.findOne({
+    where: { id: product_id}
+  })
+  const informedList = await Product.findOne({
+    where: { title: req.body.title, author: req.body.author, description: req.body.description, price: req.body.price }
+  })
+    if (productExistList.id === informedList.title || informedList.auhtor || informedList.description || informedList.price) {
+      await thisListExists.update(req.body);
+      return res.json({ product_id });
       }
-    }
-
-  async deleteWishes(req, res) {
-    const { id } = req.params;
-    const userDeleteWish = await User.findByPk(id)
-    if (Wishlist === null){
-    return res.status(400).json({error: "Lista não pode ser deletada"})
-  }
-    await userDeleteWish.destroy();
-    return res.send("Sucesso: Lista deletada!");
-  }
-
-  async indexWishes(req, res) {
-    const { id } = req.params;
-    const wishRead = await User.findByPk(id);
-    return res.json(wishRead);
-  }
-
-  async findAllWishes(req, res) {
-    const wishes = await User.findAll({
-      limit: 1,
-      offset: 1,
-      where: { id: req_id},
-    });
-    return res.json(wishes);
-  }
-
-    async findWishlist(req, res) {
-      const { id } = req.params;
-      const users = await User.findByPk(id, {
-        include: { association: "user" },
-      });
-
-      return res.json(users);
-    }
-
-    async findWishlistProduct(req, res) {
-      const { product_id } = req.params;
-      const product = await User.findByPk(id, {
-        include: { association: "product" },
-      });
-
-      return res.json(product);
-    }
+    // if (informedList) {
+    //   return res.status(406).json({ error: "Produto já existe!" });
+    // }
+  // return res.status(404).json({ error: "Usuario não encontrado" });
 }
 
-export default new WishListController();
+  async findAllWishlist(req, res) {
+    const { wishlist_id } = req.params;
+    const wisklistAll = await Wishlist.findByPk(wishlist_id, {
+      include: { association: "products" },
+    });
 
+    return res.json(wisklistAll);
+  }
+}
+export default new WishlistController();
 
