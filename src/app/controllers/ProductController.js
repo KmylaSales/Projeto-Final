@@ -1,4 +1,5 @@
 import Product from "../models/Product";
+import User from "../models/User";
 
 
 class ProductController {
@@ -77,17 +78,16 @@ async index(req, res) {
   return res.json(productRead);
 }
 
-// // SEARCH MULTIPLE PRODUCTS
+// SEARCH MULTIPLE PRODUCTS
 
-// // Filtro por nome do [cliente??]
 
-// async findAll(req, res) {
-//   const users = await User.findAll({
-//     where: { title: { [Op.iLike]: `%${req.body.title}%` } },
-//   });
+async findAll(req, res) {
+  const users = await User.findAll({
+    where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+  });
 
-//   return res.json(users);
-// }
+  return res.json(users);
+}
 }
 
 export default new ProductController();

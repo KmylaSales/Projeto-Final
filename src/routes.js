@@ -36,12 +36,11 @@ routes.put("/wishlist/:req_wishlist_id", WishlistController.updateId)
 
 routes.post("/product", ProductController.store)
 
-routes.post("/wishlist", WishlistController.store)
 
 
 // routes.get("/wishlist", WishlitController.index)
 
-
+routes.post("/wishlist/:user_id", WishlistController.store);
 
 
 //Importar controller do Product

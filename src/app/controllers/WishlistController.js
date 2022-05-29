@@ -1,25 +1,27 @@
 
 import User from "../models/User";
-import Product from "../models/ProductModels"
+import Wishlist from "../models/Wishlist";
 
 class WishListController {
+
   async store(req, res) {
-    const { user_id } = req.params
-    const { name } = req.body
-    const { product_id } = req.params
+    try {
+      const { user_id } = req.params;
+      const thisHaveUser = await User.findByPk(user_id)
+      if (!thisHaveUser) {
+        return res.status(406).json({ error: "Lista de desejos já existe! " });
+      }
 
-    const user = await User.findOne(user_id)
-    const product = await Product.findByPk(product_id)
-
-    if (!user && !product) {
-      return res.status(400).json({error: 'Usuário não localizado'})
+      const { name } = req.body;
+      const wishlist = await Wishlist.create({
+        name,
+        user_id: parseInt(user_id, 10),
+      });
+      return res.json(wishlist);
+    } catch (error) {
+      console.error(error)
+      return res.json({ ok: false });
     }
-    const wishlist = await Wishlist.create({
-      user_id,
-      name,
-      product_id
-    })
-    return res.json(wishlist)
   }
   
   async updateId(req, res) {

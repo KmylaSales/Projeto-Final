@@ -12,7 +12,7 @@ class User extends Model {
       },
       {
         sequelize,
-        tableName: 'user',
+        tableName: "users",
       }
     );
     // Fazendo a criptografica da nossa senha
@@ -23,6 +23,13 @@ class User extends Model {
     });
 
     return this;
+  }
+
+  static associate(models) {
+    this.hasMany(models.Wishlist, {
+      foreignKey: "user_id",
+      as: "wishlist",
+    });
   }
 }
 

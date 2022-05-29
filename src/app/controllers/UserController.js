@@ -52,11 +52,11 @@ class UserController {
 
   async delete(req, res) {
     const { id } = req.params;
-    /*  if(userDelete){
+     if(userDelete){
           const findWhishlist = await User.findAll({ 
             include:{ association: 'wishlist' }
-          })
-      } */
+    })
+      }
     const userDelete = await User.findByPk(id);
 
     await userDelete.destroy();
