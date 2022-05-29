@@ -1,6 +1,6 @@
 import Sequelize, { Model } from "sequelize";
 
-class User extends Model {
+class Product extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -17,6 +17,14 @@ class User extends Model {
 
     return this;
   }
+
+  static associate(models) {
+    this.belongsToMany(models.Wishlist, {
+      foreignKey: "product_id",
+      through: "wishlist_product",
+      as: "wishlist",
+    });
+  }
 }
 
-export default User;
+export default Product;

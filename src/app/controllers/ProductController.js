@@ -22,80 +22,71 @@ class ProductController {
     });
   }
 
-  // Fazendo autualização do Usuário /// payloand ---
   async update(req, res) {
     const { req_id } = req.params;
 
-    const thisUserExists = await Product.findOne({
+    const thisTitleExists = await Product.findOne({
       where: { id: req_id },
     });
 
-    if (thisUserExists) {
-      const informedEmail = await Product.findOne({
+    if (thisTitleExists) {
+      const informedTitle = await Product.findOne({
         where: { title: req.body.title },
       });
 
-      if (!informedEmail || informedEmail.email === thisUserExists.email) {
+      if (!informedTitle || informedTitle.title === thisTitleExists.title) {
         const { id, title, author, description, price } =
-          await thisUserExists.update(req.body);
+          await thisTitleExists.update(req.body);
         return res.json({ id, title, author, description, price });
       }
 
-      if (informedEmail) {
+      if (informedTitle) {
         return res.status(406).json({ error: "Produto já existe! " });
       }
     }
     return res.status(404).json({ error: "Usuario não encontrado" });
   }
 
-  // // Fazendo o delete do user
-  // async delete(req, res) {
-  //   const { id } = req.params;
-  //   /*  if(userDelete){
-  //         const findWhishlist = await User.findAll({
-  //           include:{ association: 'wishlist' }
-  //         })
-  //     } */
-  //   const userDelete = await Product.findByPk(id);
+  async delete(req, res) {
+    const { req_id } = req.params;
+    const userDelete = await Product.findByPk(req_id);
+    // if (userDelete) {
+    //   const productDelete = await Product.findAll({
+    //     include: { association: "wishlist" },
+    //   });
 
-  //   await userDelete.destroy();
-  //   return res.send();
-  // }
+    //   if (productDelete) {
+    //     return res
+    //       .status(405)
+    //       .json({ erro: "Ops vc tem uma lista de desejos" });
+    //   }
+    // }
 
-  // // Fazendo busca de um usuario por id
-  // async index(req, res) {
-  //   const { id } = req.params;
-  //   const userRead = await Product.findByPk(id);
-  //   return res.json(userRead);
-  // }
+    await userDelete.destroy();
+    return res.send();
+  }
 
-  // // fazendo busca de um usuario por email
-  // async findEmail(req, res) {
-  //   const { req_title } = req.params;
-  //   const userReade = await Product.findOne({
-  //     where: { email: req_title },
-  //   });
-  //   return res.json(userReade);
-  // }
+  async index(req, res) {
+    const { req_id } = req.params;
+    const userRead = await Product.findByPk(req_id);
+    return res.json(userRead);
+  }
 
-  // fazendo busca pelo nome
   async findAll(req, res) {
     const users = await Product.findAll({
-      limit: 1,
-      offset: 1,
-      where: { name: { [Op.iLike]: `%${req.body.name}%` } },
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
     });
     return res.json(users);
   }
 
-  // // Fazendo busca de uma lista por um cliente
-  // //   async findWishlist(req, res) {
-  // //     const { id } = req.params;
-  // //     const users = await Product.findByPk(id, {
-  // //       include: { association: "wishlist" },
-  // //     });
+  // Fazendo busca de uma lista por um cliente
+  async findWishlist(req, res) {
+    const { req_id } = req.params;
+    const users = await Product.findByPk(req_id, {
+      include: { association: "wishlist" },
+    });
 
-  // //     return res.json(users);
-  // //   }
+    return res.json(users);
+  }
 }
 export default new ProductController();

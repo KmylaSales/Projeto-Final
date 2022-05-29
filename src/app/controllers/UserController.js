@@ -4,19 +4,25 @@ const { Op } = require("sequelize");
 
 class UserController {
   async store(req, res) {
-    const thisUserExists = await User.findOne({
-      where: { email: req.body.email },
-    });
-    if (thisUserExists) {
-      return res.status(406).json({ error: "Usuário já existe! " });
-    }
+    try {
+      const thisUserExists = await User.findOne({
+        where: { email: req.body.email },
+      });
+      if (thisUserExists) {
+        return res.status(406).json({ error: "Usuário já existe! " });
+      }
 
-    const { id, name, email } = await User.create(req.body);
-    return res.json({
-      id,
-      name,
-      email,
-    });
+      const { id, name, email } = await User.create(req.body);
+      return res.json({
+        id,
+        name,
+        email,
+      });
+    } catch (error) {
+      console.log(req.body);
+      res.status(500).json({ error: "Ops!! Algo deu errado" });
+    }
+    return res.json();
   }
 
   async update(req, res) {
@@ -95,12 +101,7 @@ class UserController {
   }
 
   async findAllUser(req, res) {
-    const getPagination = (page, size) => {
-      const limit = size ? +size : 3;
-      const offset = page ? page * limit : 0;
-      return { limit, offset };
-    };
-    const users = await User.findByPk(getPagination);
+    const users = await User.findAll();
 
     return res.json(users);
   }
