@@ -88,5 +88,47 @@ class ProductController {
 
     return res.json(users);
   }
+
+  
+  async SearchAllP (req, res) {
+
+    //valores de página e quantidade em cada lote é informado via URL 
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+
+    const startIndex =(page-1)* limit
+    const endIndex = page * limit
+
+  const productfind = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+    });
+
+    const pagination = {}
+
+    // Pagina atual 
+    pagination.pagina_atual = {
+        page: page,
+        limit: limit
+      }
+
+    // limitando exibição da próxima página ao tamanho do resultado da busca
+    if (endIndex < productfind.length){
+    pagination.proxima_pagina = {
+      page: page +1,
+      limit: limit
+    }
+    }
+
+  // limitando exibição da página anterior como maior que zero, ou seja, a primeira página é a 1
+    if(startIndex > 0) {
+    pagination.pagina_anterior = {
+      page: page -1,
+      limit: limit
+    }}
+
+    pagination.listaProduto = productfind.slice(startIndex, endIndex)
+
+    return res.json(pagination);
 }
 export default new ProductController();
