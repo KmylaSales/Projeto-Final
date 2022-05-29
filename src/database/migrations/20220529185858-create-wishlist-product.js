@@ -1,28 +1,25 @@
-/* eslint-disable lines-around-directive */
-// eslint-disable-next-line strict
-"use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("wishlist_product", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING,
+      wishlist_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: { model: "wishlist", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
-      email: {
-        type: Sequelize.STRING,
+      product_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
-      },
-      password_hash: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        references: { model: "products", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
       },
       created_at: {
         type: Sequelize.DATE,
@@ -36,6 +33,7 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("wishlist_product");
   },
 };
+

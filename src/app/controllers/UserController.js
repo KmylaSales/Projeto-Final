@@ -50,14 +50,31 @@ class UserController {
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    const userDelete = await User.findByPk(id);
+    const { req_id } = req.params;
+    const userDelete = await User.findByPk(req_id);
     /*  if(userDelete){
           const findWhishlist = await User.findAll({
             include:{ association: 'wishlist' }
           })
           res.status(405).json({error: Você possui uma lista de desejos, não podemos deletar sua conta! })
       } */
+    if (userDelete) {
+      const findWishlist = await User.findAll({
+        include: {
+          association: "wishlist",
+          attributes: ["name"],
+          through: {
+            attributes: [],
+          },
+        },
+      });
+      if (findWishlist) {
+        res.status(405).json({
+          error:
+            "Você possui uma lista de desejos, não podemos deletar sua conta!",
+        });
+      }
+    }
 
     await userDelete.destroy();
     return res.send();
@@ -87,16 +104,8 @@ class UserController {
 
   async findAll(req, res) {
     const users = await User.findAll({
-      limit: 10,
-      offset: 1,
       where: { name: { [Op.iLike]: `%${req.body.name}%` } },
     });
-
-    if (!users || users === null) {
-      res
-        .status(404)
-        .json({ error: "Ops! Usuário não existe ou não foi informado!" });
-    }
     return res.json(users);
   }
 

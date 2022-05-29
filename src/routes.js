@@ -4,7 +4,6 @@ import { Router } from "express";
 import UserController from "./app/controllers/UserController";
 import ProductController from "./app/controllers/ProductController";
 import WishlistController from "./app/controllers/WishlistController";
-import WishProdController from "./app/controllers/WishProdController";
 
 const routes = new Router();
 
@@ -12,7 +11,7 @@ const routes = new Router();
 // //-----------------------------------------------------------------------------
 routes.post("/users", UserController.store);
 routes.put("/users/:req_email", UserController.update);
-routes.delete("/users/:id", UserController.delete);
+routes.delete("/users/:req_id", UserController.delete);
 routes.get("/users/:id", UserController.index);
 routes.get("/users/email/:req_email", UserController.findEmail);
 routes.get("/users/name/all", UserController.findAll);
@@ -29,15 +28,12 @@ routes.get("/product/searchWishlist/:req_id", ProductController.findWishlist);
 
 // // Rotas Wishlist
 // //-----------------------------------------------------------------------------
-routes.post("/wishlist/:user_id", WishlistController.store);
-// routes.put("/wishlist/", WishlistController.update);
+routes.post("/wishlistProduct/:user_id", WishlistController.store);
+routes.put("/wishlist/:req_id/:product_id", WishlistController.update);
 // routes.delete("/wishlist/", WishlistController.delete);
-routes.get(
-  "/wishlist/wishlist_product/:wishlist_id",
-  WishlistController.findAllWishlist
-);
+// routes.get(
+//   "/wishlist/wishlist_product/:wishlist_id",
+//   WishlistController.findAllWishlist
+// );
 
-// // Rotas Wishlist-Product
-// //-----------------------------------------------------------------------------
-routes.post("/wishlistProduct/:wishlist_id", WishProdController.store);
 export default routes;
