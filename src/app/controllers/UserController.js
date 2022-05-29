@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Wishlist from "../models/Wishlist";
 
 const { Op } = require("sequelize");
 
@@ -50,16 +51,22 @@ class UserController {
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    const userDelete = await User.findByPk(id);
-    /*  if(userDelete){
-          const findWhishlist = await User.findAll({
-            include:{ association: 'wishlist' }
-          })
-          res.status(405).json({error: Você possui uma lista de desejos, não podemos deletar sua conta! })
-      } */
+    const { req_id } = req.params;
+    const userDelete = await User.findByPk(req_id);
+    if (userDelete) {
+      const findWishlist = await Wishlist.findAll({
+        where: { user_id: req_id },
+      });
+      if (findWishlist.length !== 0) {
+        res.status(405).json({
+          error:
+            "Você possui uma lista de desejos, não podemos deletar sua conta!",
+        });
+      } else {
+        await userDelete.destroy();
+      }
+    }
 
-    await userDelete.destroy();
     return res.send();
   }
 
@@ -87,16 +94,8 @@ class UserController {
 
   async findAll(req, res) {
     const users = await User.findAll({
-      limit: 10,
-      offset: 1,
       where: { name: { [Op.iLike]: `%${req.body.name}%` } },
     });
-
-    if (!users || users === null) {
-      res
-        .status(404)
-        .json({ error: "Ops! Usuário não existe ou não foi informado!" });
-    }
     return res.json(users);
   }
 
@@ -104,6 +103,27 @@ class UserController {
     const users = await User.findAll();
 
     return res.json(users);
+  }
+
+  async findForWishlist(req, res) {
+    const { user_id } = req.params;
+    const user = await User.findOne({
+      where: { id: user_id },
+    });
+
+    if (user) {
+      const wishlistUser = await User.findAll({
+        attributes: ["name"],
+        include: [
+          {
+            association: "wishlist",
+            required: false,
+          },
+        ],
+      });
+      res.json(wishlistUser);
+    }
+    return res.json();
   }
 }
 export default new UserController();
