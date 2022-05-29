@@ -9,14 +9,14 @@ const routes = new Router();
 
 // // Rotas do usuario
 // //-----------------------------------------------------------------------------
-// routes.post("/users", UserController.store);
-// routes.put("/users/:req_email", UserController.update);
-// routes.delete("/users/:req_id", UserController.delete);
-// routes.get("/users/:id", UserController.index);
-// routes.get("/users/email/:req_email", UserController.findEmail);
-// routes.get("/users/name/all", UserController.findAll);
-routes.get("/users/all", UserController.SearchAllC);
-// routes.get("/users/wishlist/:user_id", UserController.findForWishlist);
+routes.post("/users", UserController.store);
+routes.put("/users/:req_email", UserController.update);
+routes.delete("/users/:req_id", UserController.delete);
+routes.get("/users/:id", UserController.index);
+routes.get("/users/email/:req_email", UserController.findEmail);
+routes.get("/users/name/all", UserController.findAll);
+routes.get("/users/all", UserController.findAllUser);
+routes.get("/users/wishlist/:user_id", UserController.findForWishlist);
 
 // // Rotas Produtos
 // //-----------------------------------------------------------------------------

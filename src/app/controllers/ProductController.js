@@ -1,5 +1,5 @@
 import Product from "../models/Product";
-// import Wishlist from "../models/Wishlist";
+import Wishlist from "../models/Wishlist";
 
 const { Op } = require("sequelize");
 
@@ -49,19 +49,20 @@ class ProductController {
   }
 
   async delete(req, res) {
-    // const { req_id } = req.params;
-    // const productDelete = await Product.findOne({
-    //   where: { id: req_id },
-    // });
-    // const list = Wishlist.findAll();
-
-    // if (list.length !== 0) {
-    //   res.status(400).json({ error: "Esse produto está em uma lista" });
-    // } else {
-    //   res.status(200).json({ message: "voce pode exluir" });
-    // }
-
-    return res.send();
+    const { req_id } = req.params;
+    const productDelete = await Wishlist.findAll({
+      where: { id: req_id },
+      include: [
+        {
+          association: "products",
+          required: false,
+        },
+      ],
+    });
+    if (!productDelete) {
+      return res.json({ m: "vc pode apagar " });
+    }
+    return res.json({ m: "vc não pode apagar " });
   }
 
   async index(req, res) {

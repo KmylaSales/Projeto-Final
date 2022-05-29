@@ -107,23 +107,18 @@ class UserController {
 
   async findForWishlist(req, res) {
     const { user_id } = req.params;
-    const user = await User.findOne({
+    const user = await User.findAll({
       where: { id: user_id },
+      attributes: ["name"],
+      include: [
+        {
+          association: "wishlist",
+          required: false,
+        },
+      ],
     });
 
-    if (user) {
-      const wishlistUser = await User.findAll({
-        attributes: ["name"],
-        include: [
-          {
-            association: "wishlist",
-            required: false,
-          },
-        ],
-      });
-      res.json(wishlistUser);
-    }
-    return res.json();
+    res.json(user);
   }
 }
 export default new UserController();
