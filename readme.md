@@ -149,7 +149,6 @@ underscoredAll: true,
 
    "product_id":5,
    "name": "Lista de casameto"
-
    }`
 
 ### Buscar whishlist
