@@ -15,6 +15,7 @@ routes.delete("/users/:product_id", UserController.delete);
 routes.get("/users/:id", UserController.index);
 routes.get("/users/email/:req_email", UserController.findEmail);
 routes.get("/users/name/all", UserController.findAll);
+routes.get("/users", UserController.findAllUsers);
 routes.get("/users/wishlist/:user_id", UserController.findForWishlist);
 routes.get("/users/name/searchp", UserController.SearchAllC);
 
@@ -26,7 +27,6 @@ routes.delete("/product/delete/:product_id", ProductController.delete);
 routes.get("/product/search/:req_id", ProductController.index);
 routes.get("/product/searchAll", ProductController.findAll);
 routes.get("/product/searchWishlist/:req_id", ProductController.findWishlist);
-routes.get("/product/name/searchp", ProductController.SearchAllP);
 routes.get("/product/title/searchp", ProductController.SearchAllP);
 
 // // Rotas Wishlist

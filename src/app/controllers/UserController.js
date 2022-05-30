@@ -115,6 +115,12 @@ class UserController {
     res.json(user);
   }
 
+  async findAllUsers(req, res) {
+    const users = await User.findAll();
+
+    return res.json(users);
+  }
+
   async SearchAllC(req, res) {
     const page = parseInt(req.query.page, 10);
     const limit = parseInt(req.query.limit, 10);

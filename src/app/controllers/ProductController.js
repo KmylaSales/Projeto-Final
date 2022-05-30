@@ -58,7 +58,9 @@ class ProductController {
       await productDelete.destroy();
       return res.json();
     } catch (error) {
-      return res.send({ error: "Não foi possivel excluir produto" });
+      return res.send({
+        error: "Não foi possivel excluir produto pois ele pertence a uma lista",
+      });
     }
   }
 

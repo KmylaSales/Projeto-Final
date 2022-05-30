@@ -57,6 +57,13 @@ class WishlistController {
         where: { id: wishlist_id },
         include: [{ association: "products" }],
       });
+
+      if (!findwishlist) {
+        return res
+          .status(400)
+          .json({ error: "Esta lista de desejo não existe" });
+      }
+
       const wishList = findwishlist.products;
 
       const inList =
