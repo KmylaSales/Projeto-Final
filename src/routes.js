@@ -11,30 +11,34 @@ const routes = new Router();
 // //-----------------------------------------------------------------------------
 routes.post("/users", UserController.store);
 routes.put("/users/:req_email", UserController.update);
-routes.delete("/users/:req_id", UserController.delete);
+routes.delete("/users/:product_id", UserController.delete);
 routes.get("/users/:id", UserController.index);
 routes.get("/users/email/:req_email", UserController.findEmail);
 routes.get("/users/name/all", UserController.findAll);
 routes.get("/users/all", UserController.findAllUser);
 routes.get("/users/wishlist/:user_id", UserController.findForWishlist);
+routes.get("/users/name/searchp", UserController.SearchAllC);
 
 // // Rotas Produtos
 // //-----------------------------------------------------------------------------
 routes.post("/product", ProductController.store);
 routes.put("/product/:req_id", ProductController.update);
-routes.delete("/product/delete/:req_id", ProductController.delete);
+routes.delete("/product/delete/:product_id", ProductController.delete);
 routes.get("/product/search/:req_id", ProductController.index);
 routes.get("/product/searchAll", ProductController.findAll);
 routes.get("/product/searchWishlist/:req_id", ProductController.findWishlist);
+// routes.get("/product/name/searchp", ProductController.SearchAllP);
 
 // // Rotas Wishlist
 // //-----------------------------------------------------------------------------
 routes.post("/wishlistProduct/:user_id", WishlistController.store);
 // routes.put("/wishlist/", WishlistController.update);
-// routes.delete("/wishlist/", WishlistController.delete);
-// routes.get(
-//   "/wishlist/wishlist_product/:wishlist_id",
-//   WishlistController.findAllWishlist
-// );
+routes.delete("/wishlist/delete/:req_id", WishlistController.delete);
+routes.get("/wishlist/find/:req_id", WishlistController.index);
+routes.put("/wishlist/up/:wishlist_id", WishlistController.update);
+routes.get(
+  "/wishlist/searchWishlist/:user_id",
+  WishlistController.findForWishlist
+);
 
 export default routes;
