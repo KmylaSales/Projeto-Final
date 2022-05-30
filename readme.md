@@ -145,8 +145,7 @@ underscoredAll: true,
 
    exemplo de body
 
-   `{
-
+  `{
    "product_id":5,
    "name": "Lista de casameto"
    }`
