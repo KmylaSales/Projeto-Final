@@ -1,4 +1,3 @@
-
 import Sequelize, { Model } from "sequelize";
 
 class Product extends Model {
@@ -6,18 +5,25 @@ class Product extends Model {
     super.init(
       {
         title: Sequelize.STRING,
-        author: Sequelize.STRING,
         description: Sequelize.STRING,
+        author: Sequelize.STRING,
         price: Sequelize.INTEGER,
       },
       {
         sequelize,
-        tableName:'product'
+        tableName: "products",
       }
     );
 
     return this;
-    
+  }
+
+  static associate(models) {
+    this.belongsToMany(models.Wishlist, {
+      foreignKey: "product_id",
+      through: "wishlist_product",
+      as: "wishlist",
+    });
   }
 }
 

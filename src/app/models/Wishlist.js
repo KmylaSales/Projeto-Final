@@ -18,7 +18,11 @@ class Wishlist extends Model {
 
   static associate(models) {
     this.belongsTo(models.User, { foreignKey: "user_id", as: "users" });
-      
+    this.belongsToMany(models.Product, {
+      foreignKey: "wishlist_id",
+      through: "wishlist_product",
+      as: "products",
+    });
   }
 }
 

@@ -1,93 +1,123 @@
 import Product from "../models/Product";
-import User from "../models/User";
 
+const { Op } = require("sequelize");
 
 class ProductController {
-
-//Create Product
+//Cadastrando um produto
   async store(req, res) {
-
-//Verificando se existe um nome cadastrado
-  const thisProductExists = await Product.findOne({
-    where: { title: req.body.title},
-  });
-  if(thisProductExists){
-    return res.status(400).json({ error: "Produto já existe"});
-  }
-//Criando o novo usuário com as informações do body 
-
-    const {id, author, title, price} = await Product.create(req.body);
-    return res.json({
-      id,
-      author,
-      title,
-      price
-    });
-}
- 
-
-//UPDATE PRODUCT 
-
-async update(req, res) {
-  const { req_title } = req.params;
-
-  // verificar se o title existe
-  const thisTitleExists = await Product.findOne({
-    where: { title: req_title },
-  });
-
-  if (thisTitleExists) {
-    const informedTitle = await Product.findOne({
+    const thisProductExists = await Product.findOne({
       where: { title: req.body.title },
     });
-
-    // Verifico se o title do body não é null ou se ele é igual ao title params
-    if (!informedTitle || informedTitle.title === thisTitleExists.title) {
-      const { id, title, description, price } = await thisTitleExists.update(req.body);
-      return res.json({ id, title, description, price });
-    }
-
-    // Email do body já existe !! Retorna o erro
-    if (informedTitle) {
+    if (thisProductExists) {
       return res.status(400).json({ error: "Produto já existe! " });
     }
+    const { id, title, author, description, price } = await Product.create(
+      req.body
+    );
+    return res.json({
+      id,
+      title,
+      author,
+      description,
+      price,
+    });
   }
-  return res.status(400).json({ error: "Produto não alterado!" });
+
+//Atualizando dados de um produto
+  async update(req, res) {
+    const { req_id } = req.params;
+
+    const thisTitleExists = await Product.findOne({
+      where: { id: req_id },
+    });
+
+    if (thisTitleExists) {
+      const informedTitle = await Product.findOne({
+        where: { title: req.body.title },
+      });
+
+      if (!informedTitle || informedTitle.title === thisTitleExists.title) {
+        const { id, title, author, description, price } =
+          await thisTitleExists.update(req.body);
+        return res.json({ id, title, author, description, price });
+      }
+
+      if (informedTitle) {
+        return res.status(406).json({ error: "Produto já existe! " });
+      }
+    }
+    return res.status(404).json({ error: "Usuario não encontrado" });
+  }
+
+//Removendo um produto
+
+    
+//Pesquisando um produto
+  async index(req, res) {
+    const { req_id } = req.params;
+    const userRead = await Product.findByPk(req_id);
+    return res.json(userRead);
+  }
+
+//Pesquisando vários produtos por filtro
+  async findAll(req, res) {
+    const users = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+    });
+    return res.json(users);
+  }
+
+//Pesquisando uma lista por um produto
+  async findWishlist(req, res) {
+    const { req_id } = req.params;
+    const users = await Product.findByPk(req_id, {
+      include: { association: "wishlist" },
+    });
+
+    return res.json(users);
+  }
+
+//Pesquisa paginada
+  async SearchAllP(req, res) {
+
+    //valores de página e quantidade em cada lote é informado via URL 
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+
+    const startIndex =(page-1)* limit
+    const endIndex = page * limit
+
+  const productfind = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+    });
+
+    const pagination = {}
+
+    // Pagina atual 
+    pagination.pagina_atual = {
+        page: page,
+        limit: limit
+      }
+
+    // limitando exibição da próxima página ao tamanho do resultado da busca
+    if (endIndex < productfind.length){
+    pagination.proxima_pagina = {
+      page: page +1,
+      limit: limit
+    }
+    }
+
+  // limitando exibição da página anterior como maior que zero, ou seja, a primeira página é a 1
+    if(startIndex > 0) {
+    pagination.pagina_anterior = {
+      page: page -1,
+      limit: limit
+    }}
+
+    pagination.listaProduto = productfind.slice(startIndex, endIndex)
+
+    return res.json(pagination);
 }
-
-// //DELETE PRODUCT - ID 
-
-async delete(req, res){
-  const { id } = req.params;
-  /*  if(userDelete){
-        const findWhishlist = await User.findAll({ 
-          include:{ association: 'wishlist' }
-        })
-    } */
-  const productDelete = await Product.findByPk(id);
-
-  await productDelete.destroy();
-  return res.send();
 }
-
-// // SEARCH FOR A PRODUCT BY ID 
-
-async index(req, res) {
-  const { id } = req.params;
-  const productRead = await Product.findByPk(id);
-  return res.json(productRead);
-}
-
-// SEARCH MULTIPLE PRODUCTS
-
-
-async findAll(req, res) {
-  const users = await User.findAll({
-    where: { title: { [Op.iLike]: `%${req.body.title}%` } },
-  });
-
-  return res.json(users);
-}
-}
-
 export default new ProductController();
