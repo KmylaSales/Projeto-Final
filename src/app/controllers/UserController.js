@@ -122,7 +122,6 @@ class UserController {
   }
 
   async SearchAllC(req, res) {
-    // valores de página e quantidade em cada lote é informado via URL
     const page = parseInt(req.query.page, 10);
     const limit = parseInt(req.query.limit, 10);
 
@@ -141,7 +140,6 @@ class UserController {
       limit,
     };
 
-    // limitando exibição da próxima página ao tamanho do resultado da busca
     if (endIndex < usersfind.length) {
       pagination.proxima_pagina = {
         page: page + 1,
@@ -149,7 +147,6 @@ class UserController {
       };
     }
 
-    // limitando exibição da página anterior como maior que zero, ou seja, a primeira página é a 1
     if (startIndex > 0) {
       pagination.pagina_anterior = {
         page: page - 1,

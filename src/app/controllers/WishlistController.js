@@ -2,7 +2,7 @@ import Wishlist from "../models/Wishlist";
 import User from "../models/User";
 import Product from "../models/Product";
 
-// const { Op } = require("sequelize");
+const { Op } = require("sequelize");
 
 class WishlistController {
   async store(req, res) {
@@ -29,35 +29,47 @@ class WishlistController {
 
       return res.json(wishlist);
     } catch (error) {
+      console.log(error);
       return res.json({ ok: false });
     }
   }
 
   async update(req, res) {
     try {
-      const { wishlist_id } = req.params;
-      const { product_id } = req.body;
+      const { user_id } = req.params;
+      const { wishlist_id, product_id } = req.body;
 
-      const list = await Wishlist.findOne({
-        where: { id: wishlist_id },
+      const user = await User.findOne({
+        where: { id: user_id },
       });
 
+      if (!user) {
+        return res.status(401).json({ error: "Você não está cadastrado" });
+      }
       const product = await Product.findOne({
         where: { id: product_id },
       });
-
-      const thereProduct = await Product.findOne({
-        include: [{ association: "wishlist", where: { id: product } }],
-      });
-
-      if (thereProduct) {
-        return res
-          .status(401)
-          .json({ error: "esse produto ja esta na sua lista" });
+      if (!product) {
+        return res.status(400).json({ error: "Esse produto não existe" });
       }
-      await product.addProduct(product);
 
-      return res.json(list);
+      const findwishlist = await Wishlist.findOne({
+        where: { id: wishlist_id },
+        include: [{ association: "products" }],
+      });
+      const wishList = findwishlist.products;
+
+      const inList =
+        wishList.filter((item) => item.dataValues.id === product_id).length !==
+        0;
+      console.log(inList);
+      if (inList) {
+        return res.status(405).json({ error: "Esse produto ja esta na lista" });
+      }
+
+      await findwishlist.addProduct(product);
+
+      return res.status(200).json("Você adicinou um produto");
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "Ops. Algo deu errado" });
@@ -85,6 +97,49 @@ class WishlistController {
       res.status(404).json({ error: "LIsta de desejos não localizada!" });
     }
     return res.json(wishlistSearch);
+  }
+
+  async SearchAllW(req, res) {
+    const product = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+      include: [
+        {
+          association: "wishlist",
+          required: true,
+        },
+      ],
+    });
+
+    const page = parseInt(req.query.page, 10);
+    const limit = parseInt(req.query.limit, 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const pagination = {};
+
+    pagination.pagina_atual = {
+      page,
+      limit,
+    };
+
+    if (endIndex < product.length) {
+      pagination.proxima_pagina = {
+        page: page + 1,
+        limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      pagination.pagina_anterior = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    pagination.listaProduto = product.slice(startIndex, endIndex);
+
+    return res.json(pagination);
   }
 
   async findForWishlist(req, res) {

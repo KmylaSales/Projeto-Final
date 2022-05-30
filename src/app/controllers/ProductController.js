@@ -75,7 +75,6 @@ class ProductController {
     return res.json(users);
   }
 
-  // Fazendo busca de uma lista por um cliente
   async findWishlist(req, res) {
     const { req_id } = req.params;
     const users = await Product.findByPk(req_id, {
@@ -83,6 +82,43 @@ class ProductController {
     });
 
     return res.json(users);
+  }
+
+  async SearchAllP(req, res) {
+    const page = parseInt(req.query.page, 10);
+    const limit = parseInt(req.query.limit, 10);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const productfind = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+    });
+
+    const pagination = {};
+
+    pagination.pagina_atual = {
+      page,
+      limit,
+    };
+
+    if (endIndex < productfind.length) {
+      pagination.proxima_pagina = {
+        page: page + 1,
+        limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      pagination.pagina_anterior = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    pagination.listaProduto = productfind.slice(startIndex, endIndex);
+
+    return res.json(pagination);
   }
 }
 export default new ProductController();
