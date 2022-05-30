@@ -82,6 +82,14 @@ module.exports = {
 
     1.1 Usando o método POST informando nome, email e senha no corpo da requisição, utilizando a seguinte rota:
     http://localhost:3000/users
+    
+    exemplo de body 
+    
+`{
+    "name": "userTest",
+    "email": "userTest@gmail.com",
+    "password": "123456"
+}`
 
 ### Buscar usuários
 
@@ -103,6 +111,13 @@ module.exports = {
 
     http://localhost:3000/users/name/searchp?page=1&limit=5
 
+    exemplo de body 
+    
+    `{
+    "name": "a"
+     }`
+    
+    
     2.5 É possível realizar uma busca de wishilist do usuário informando o ID
 
     http://localhost:3000/user/find/wishlist/:user_id
@@ -116,6 +131,14 @@ module.exports = {
     http://localhost/3000/users/:req_email
 
     3.2 Foi escolhido para atualização do usuário o parametro do email do cliente
+   
+   exemplo de body
+   
+   `{
+    "name": "UserTest",
+    "email": "UserTest8@gmail.com",
+    "password": "2345689"
+    }`
 
 ### Deletando usuário 
 
@@ -134,7 +157,16 @@ module.exports = {
 1. É possível cadastrar whishlist através do postman, por meio da rota:
 
     1.1 Usando o método POST informado o ID do usuário, nome E ID do produto no corpo da requisição
-    http://localhost:3000/wishlist/:user_id
+    http://localhost:3000/wishlistProduct/:user_id
+    
+    exemplo de body
+    
+    `{
+    
+    "product_id":5,
+    "name": "Lista de casameto"
+    
+    }`
     
 
 ### Buscar whishlist
@@ -143,24 +175,38 @@ module.exports = {
 
     2.1 Usando o método GET passando parâmetro de ID do usuário onde o ID for igual ao informado
 
-    http://localhost:3000/wishlist/search/:req_id
+    http://localhost:3000/wishlist/searchWishlist/:user_id
 
-    2.2 Usando o método GET passando parametro produto é retornado o produto correspondente às whishlists que contém o produto
+    2.2 Usando o método GET passando parametro de ID da Lista de desejos
 
-    http://localhost/3000/wishlist/find/:product
+    http://localhost/3000/wishlist/find/:wishlist_id
 
     2.5 É possível realizar uma busca paginada nas wishlists cadastradas. O usuário poderá alterar o número de páginas ao inserir um número depois da igualdade no parâmetro "page". Poderá também inserir o número de itens por página informando um número depois da igualdade no parâmetro "limit".
 
     http://localhost:3000/wishlist/searchp?page=1&limit=1
+    
+    exemplo de body
+    
+    `{
+    "title": "test"
+     }`
 
 
 ### Atualizando whishlist 
 
 3. É possivel atualizar informações das whishlist cadastradas 
 
-    3.1 Usando o método PUT informando o parametro de email através da rota:
+    3.1 Usando o método PUT informando o parametro de ID de usuário 
  
-    http://localhost/3000/wishlist/:req_wishlist_id
+    http://localhost/3000/wishlist/up/:user_id
+    
+    exemplo de body
+    
+    `{
+      "wishlist_id": "1",
+      "product_id": 1
+     }`
+    
 
 ### Deletando whishlist 
 
@@ -168,8 +214,7 @@ module.exports = {
 
     4.1 Através do método DELETE passando o parâmetro ID usando a rota:
   
-    http://localhost:3000/wishlist/:id
-
+    http://localhost:3000/wishlist/delete/:wishlist_id
 
 
     //===== INSTRUÇÃO PARA CRIAR, BUSCAR, EDITAR E EXCLUIR PRODUTOS =====
@@ -183,18 +228,33 @@ module.exports = {
 
     http://localhost:3000/product
     
+    exemplo de body
+    
+    `{
+        "title": "Test",
+        "author": "teste25",
+        "description": "teste2",
+        "price": 80
+      }`
+    
 
 ### Buscar produto
 
 2. Pode-se também buscar produto cadastrados utilizando o postman, por meio da rota:
 
-    2.1 Usando método GET sem parametros retornará o produto cadastrado com ID correspondente
+    2.1 Usando método GET passando o ID do produto como paramentro 
     
-    http://localhost:3000/product/search/:req_id
+    http://localhost:3000/product/search/:product_id
 
     2.2 Usando o método GET pesquisa vários produtos por filtro
   
     http://localhost:3000/product/searchAll
+    
+    exemplo de body
+    
+    `{
+    "title": ""
+     }`
 
     2.3 É possível realizar uma busca paginada nos produtos cadastrados.
 	  O usuário poderá alterar o número de páginas ao inserir um número depois da igualdade no parâmetro
@@ -202,23 +262,38 @@ module.exports = {
 	  Usuário poderá informar também no body o início da string para busca. No caso de produto buscar por "title"
  
     http://localhost:3000/product/title/searchp?page=1&limit=5
+    
+    exemplo de body
+    
+    `{
+    "title": ""
+     }`
 
-    2.4 É possivel retornar produto cadastrado em uma whishlist informando o ID da whishlist
+    2.4 É possivel retornar produto cadastrado em uma whishlist informando o ID do produto
 	
-	http://localhost:3000/product/searchWishlist/:req_id
+	http://localhost:3000/product/searchWishlist/:product_id
  
 ### Atualizando produto 
 
 3. É possivel atualizar informações dos produtos cadastrados 
 
-    3.1 Usando o método PUT informando o parametro de ID através da rota:
+    3.1 Usando o método PUT informando o parametro de ID do produto através da rota:
 
-    http://localhost/3000/product/:req_id
+    http://localhost/3000/product/:product_id
+    
+    exemplo de body
+    
+    `{
+      "title": "Test
+      "author": "Test",
+      "description": "Test",
+      "price": 80
+      }`
 
 ### Deletando produto 
 
 4. É possivel deletar um produto cadastrado
 
-    4.1 Através do método DELETE passando o parâmetro ID usando a rota:
+    4.1 Através do método DELETE passando o parâmetro ID do produto na rota:
  
-    http://localhost:3000/product/:req_id
+    http://localhost:3000/product/:product_id
