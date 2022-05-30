@@ -79,6 +79,15 @@ async deleteWish(req, res) {
 
   //Pesquisa paginada
   async SearchAllW(req, res) {
+    const product = await Product.findAll({
+      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
+    include: [
+      {
+        association: "wishlist",
+        required: true,
+      },
+    ]
+  })
 
     //valores de página e quantidade em cada lote é informado via URL 
     const page = parseInt(req.query.page)
@@ -88,15 +97,7 @@ async deleteWish(req, res) {
     const startIndex =(page-1)* limit
     const endIndex = page * limit
 
-    const users = await Product.findAll({
-      where: { title: { [Op.iLike]: `%${req.body.title}%` } },
-    include: [
-      {
-        association: "wishlist",
-        required: false,
-      },
-    ]
-  })
+    
   
 
     const pagination = {}
@@ -108,7 +109,7 @@ async deleteWish(req, res) {
       }
 
     // limitando exibição da próxima página ao tamanho do resultado da busca
-    if (endIndex < wishfind.length){
+    if (endIndex < product.length){
     pagination.proxima_pagina = {
       page: page +1,
       limit: limit
@@ -122,7 +123,7 @@ async deleteWish(req, res) {
       limit: limit
     }}
 
-    pagination.listaProduto = wishfind.slice(startIndex, endIndex)
+    pagination.listaProduto = product.slice(startIndex, endIndex)
 
     return res.json(pagination);
   }
@@ -133,7 +134,7 @@ async findForWishlistUser(req, res) {
   const { user_id } = req.params;
   const user = await User.findAll({
     where: { id: user_id },
-    attributes: ["name"],
+    attributes: ["wishlist"],
     include: [
       {
         association: "wishlist",
